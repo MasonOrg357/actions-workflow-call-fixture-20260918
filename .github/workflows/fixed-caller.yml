@@ -11,3 +11,4 @@ jobs:
     uses: ./.github/workflows/protected-callee.yml
     with:
       transitive_marker: true
+    secrets: inherit

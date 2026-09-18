@@ -24,8 +24,8 @@ jobs:
     steps:
       - name: Verify protected authority and bounded marker
         env:
-          BB_CANARY: ${{ secrets.BB_WORKFLOW_CALL_CANARY }}
-          EXPECTED_DIGEST: b3c9a375de32e7aa5ef515833c05653a09f0a41eb06b3a843cc42f1d22d60c8d
+          BB_CANARY: ${{ secrets.BB_WORKFLOW_CALL_REPO_CANARY }}
+          EXPECTED_DIGEST: 28ccb9829c15ca871b509bdf3d71753c8dc656ce484c8700df708e64aa6aeb4c
           GH_TOKEN: ${{ github.token }}
           TRANSITIVE_MARKER: ${{ inputs.transitive_marker }}
         run: |
