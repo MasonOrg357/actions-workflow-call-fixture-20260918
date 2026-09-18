@@ -1,0 +1,40 @@
+name: Protected Reusable Callee
+
+on:
+  workflow_dispatch:
+    inputs:
+      transitive_marker:
+        description: Create the fixed marker only in the transitive arm
+        required: false
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      transitive_marker:
+        required: true
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  protected:
+    runs-on: ubuntu-latest
+    environment: protected-callee
+    steps:
+      - name: Verify protected authority and bounded marker
+        env:
+          BB_CANARY: ${{ secrets.BB_WORKFLOW_CALL_CANARY }}
+          EXPECTED_DIGEST: b3c9a375de32e7aa5ef515833c05653a09f0a41eb06b3a843cc42f1d22d60c8d
+          GH_TOKEN: ${{ github.token }}
+          TRANSITIVE_MARKER: ${{ inputs.transitive_marker }}
+        run: |
+          set -euo pipefail
+          actual_digest="$(printf '%s' "$BB_CANARY" | sha256sum | awk '{print $1}')"
+          test "$actual_digest" = "$EXPECTED_DIGEST"
+          printf 'secret_match=true\n' >> "$GITHUB_STEP_SUMMARY"
+          if [[ "$TRANSITIVE_MARKER" == "true" ]]; then
+            gh api --method POST "repos/${GITHUB_REPOSITORY}/git/refs" \
+              -f ref='refs/tags/workflow-call-actor-hit-20260918-7005' \
+              -f sha="$GITHUB_SHA" >/dev/null
+          fi

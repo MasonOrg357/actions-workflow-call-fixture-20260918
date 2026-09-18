@@ -1,0 +1,13 @@
+name: Fixed Unprivileged Caller
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  invoke-protected:
+    uses: ./.github/workflows/protected-callee.yml
+    with:
+      transitive_marker: true
